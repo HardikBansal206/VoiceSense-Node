@@ -1,0 +1,23 @@
+{
+  "name": "audio-analysis",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "audio-analysis": "file:",
+    "child_process": "^1.0.2",
+    "express": "^4.21.2",
+    "ffmpeg-static": "^5.2.0",
+    "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.2",
+    "natural": "^8.0.1",
+    "path": "^0.12.7"
+  }
+}
