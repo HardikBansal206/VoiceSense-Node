@@ -1,0 +1,105 @@
+/* General Styles */
+body {
+    background-color: #0a0a0a;
+    color: #ffffff;
+    font-family: 'Clash Display', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link {
+    color: #30ff0b;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: #128800;
+}
+
+/* Container */
+.container {
+    background: #1a1a1a;
+    padding: 30px;
+    width: 80%;
+    max-width: 900px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+h1, h3 {
+    color: #30ff0b;
+}
+
+/* File Upload */
+input[type="file"] {
+    background: #0a0a0a;
+    border: 1px solid #444;
+    padding: 10px;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* Buttons */
+button {
+    background: #30ff0b;
+    color: #000;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #128800;
+}
+
+/* Transcript Section */
+#transcript {
+    background: #111;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #444;
+    min-height: 50px;
+}
+
+/* Emergency Result Section */
+.results {
+    background: #151515;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #444;
+}
+
+.results h3 {
+    color: #30ff0b;
+}
+
+.results p {
+    font-size: 16px;
+    color: #fff;
+}
