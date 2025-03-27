@@ -1,0 +1,81 @@
+body {
+    font-family: 'Clash Display', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0a0a0a;
+    color: #ffffff;
+}
+
+.navbar {
+    background-color: #1a1a1a;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.nav-link {
+    color: #30ff0b;
+    text-decoration: none;
+    margin: 0 20px;
+    font-size: 18px;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    color: #128800;
+    text-shadow: 0 0 8px #30ff0b;
+}
+
+.container {
+    width: 60%;
+    margin: 40px auto;
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.2);
+}
+
+h1, h3 {
+    text-align: center;
+    color: #30ff0b;
+}
+
+input[type="file"], input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border: 1px solid #444;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background-color: #30ff0b;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #128800;
+    transform: scale(1.05);
+}
+
+.transcription-box, .results-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    min-height: 50px;
+    border: 1px solid #444;
+    box-shadow: 0 2px 5px rgba(0, 255, 0, 0.1);
+}
