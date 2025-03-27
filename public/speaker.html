@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaker Detection</title>
+    <link rel="stylesheet" href="css/speaker.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="home.html" class="nav-link">Home</a>
+        <a href="emergency.html" class="nav-link">Emergency Detection</a>
+        <a href="custom.html" class="nav-link">Custom Keyword</a>
+        <a href="urgency.html" class="nav-link">Urgency Classification</a>
+    </nav>
+    
+    <div class="container">
+        <h1>Speaker Detection</h1>
+
+        <h3>Upload Audio Files</h3>
+        <input type="file" id="audioFiles" multiple>
+        <button id="uploadBtn">Upload & Analyze</button>
+
+        <h3>Live Recording</h3>
+        <button id="recordBtn">Start Recording</button>
+
+        <h3>Analysis Results</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Speaker</th>
+                    <th>Status</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody id="speakerTableBody">
+                <tr><td colspan="3">Results will appear here...</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Key Extracted Information</h3>
+        <div id="keyInfo" class="info-box">Relevant details will appear here...</div>
+    </div>
+
+    <script src="js/speaker.js"></script>
+</body>
+</html>
