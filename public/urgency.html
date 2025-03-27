@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urgency Classification</title>
+    <link rel="stylesheet" href="css/urgency.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="emergency.html" class="nav-link">Emergency Detection</a>
+      <a href="custom.html" class="nav-link">Custom Keyword</a>
+      <a href="speaker.html" class="nav-link">Urgency Classification</a>
+    </nav>
+
+    <div class="container">
+      <h1>Urgency Classification</h1>
+
+      <h3>Upload Multiple Audio Files</h3>
+      <input type="file" id="audioFiles" multiple />
+      <button onclick="classifyUrgency()">Classify Urgency</button>
+
+      <h3>Classification Results</h3>
+      <table class="urgency-table">
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Urgency Level</th>
+            <th>Priority</th>
+            <th>Probable Emergency</th>
+          </tr>
+        </thead>
+        <tbody id="resultsTable">
+          <!-- Results will be populated here -->
+        </tbody>
+      </table>
+    </div>
+
+    <script src="urgency.js"></script>
+  </body>
+</html>
