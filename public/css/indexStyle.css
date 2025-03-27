@@ -1,0 +1,221 @@
+@import url('clash-display.css');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'ClashDisplay-Medium', sans-serif;
+  background: #0a0a0a;
+  color: white;
+  overflow-x: hidden;
+}
+
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+#waves, #grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+header {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% - 60px);
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+h2 {
+  font-size: 50px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+h2 span {
+  color: #30ff0b;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+.cta {
+  background: #30ff0b;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 8px;
+  color: black;
+  transition: 0.3s;
+}
+
+.cta:hover {
+  background: #18520e;
+  transform: scale(1.05);
+}
+
+.scroll-down {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #30ff0b;
+  font-size: 20px;
+  animation: bounce 1.5s infinite;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -10px); }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.features {
+  padding: 50px;
+  text-align: center;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feature {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'ClashDisplay-Light', sans-serif;
+}
+
+.feature h3 {
+  font-size: 24px;
+  color: #30ff0b;
+  font-family: 'ClashDisplay-Medium', sans-serif;
+}
+
+#grid {
+  opacity: 0.1;
+}
+
+.about {
+  padding: 50px;
+  background: #151515;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: #30ff0b;
+}
+
+.about p {
+  font-size: 18px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact {
+  padding: 50px;
+  background: #111;
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 36px;
+  color: #30ff0b;
+  margin-bottom: 20px;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.contact-form button {
+  background: #30ff0b;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  color: black;
+  transition: 0.3s;
+}
+
+.contact-form button:hover {
+  background: #08c;
+  transform: scale(1.05);
+}
+
+.footer {
+  padding: 20px;
+  background: #000;
+  color: #fff;
+  text-align: center;
+}
+
+.footer-nav {
+  margin-top: 10px;
+}
+
+.footer-nav a {
+  color: #30ff0b;
+  margin: 0 10px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}

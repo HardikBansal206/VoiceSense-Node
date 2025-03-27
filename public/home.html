@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoiceSense - AI Keyword Detection</title>
+    <link rel="stylesheet" href="css/indexStyle.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+    <script src="https://isuttell.github.io/sine-waves/javascripts/sine-waves.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  </head>
+  <body>
+    <div class="hero">
+      <canvas id="grid"></canvas>
+      <canvas id="waves"></canvas>
+
+      <header>
+        <h1>VoiceSense</h1>
+      </header>
+
+      <div class="content">
+        <h2>
+          REAL-TIME
+          <span style="font-family: ClashDisplay-ExtraLight"
+            >Keyword Detection</span
+          >
+        </h2>
+        <p>
+          AI-powered keyword spotting that works across languages, adapts with
+          minimal training, and detects intent in real-time.
+        </p>
+        <button class="cta" onclick="window.location.href='/login.html'">
+          Start Detecting
+        </button>
+      </div>
+
+      <!-- scroll down indicator -->
+      <a href="#features" class="scroll-down">↓</a>
+    </div>
+
+    <!-- information section -->
+    <section id="features" class="features">
+      <div class="feature">
+        <h3>Few-Shot Learning</h3>
+        <p>
+          Train a new keyword detector with just <b>3-5 samples</b> instead of
+          thousands. Our model rapidly adapts with minimal data.
+        </p>
+      </div>
+      <div class="feature">
+        <h3>Multilingual Support</h3>
+        <p>
+          Supports <b>50+ languages</b>, including Hindi, Mandarin, Arabic, and
+          Swahili. No need for separate models per language.
+        </p>
+      </div>
+      <div class="feature">
+        <h3>Context-Aware AI</h3>
+        <p>
+          Unlike standard keyword detection, VoiceSense can
+          <b>distinguish urgency</b>, e.g., "I need help!" vs. "Help me move
+          this."
+        </p>
+      </div>
+    </section>
+
+    <!-- about section -->
+    <section id="about" class="about">
+      <h2>About VoiceSense</h2>
+      <p>
+        VoiceSense is a cutting-edge AI technology that disrupts keyword
+        detection by integrating few-shot learning, multilingual support, and
+        context‑aware analysis to ensure real‑time, accurate insights. Our
+        mission is to provide a seamless and engaging user experience with
+        intelligent design and unparalleled performance.
+      </p>
+    </section>
+
+    <!-- contact section -->
+    <section id="contact" class="contact">
+      <h2>Contact Us</h2>
+      <form class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="email" name="email" placeholder="Your Email" required />
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </section>
+
+    <!-- footer -->
+    <footer class="footer">
+      <p>&copy; 2025 VoiceSense. All rights reserved.</p>
+      <nav class="footer-nav">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </footer>
+
+    <script src="js/indexScript.js"></script>
+  </body>
+</html>

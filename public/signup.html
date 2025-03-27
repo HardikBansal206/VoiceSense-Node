@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup - VoiceSense</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="auth-container signup-container">
+      <h2>Signup</h2>
+      <form onsubmit="event.preventDefault(); signup();">
+        <div class="input-group">
+          <input type="text" id="username" placeholder="Username" />
+        </div>
+        <div class="input-group">
+          <input type="email" id="email" placeholder="Email" />
+        </div>
+        <div class="input-group">
+          <input type="password" id="password" placeholder="Password" />
+        </div>
+        <div class="input-group">
+          <input
+            type="password"
+            id="confirm-password"
+            placeholder="Confirm Password"
+          />
+        </div>
+        <button type="submit" class="btn">Signup</button>
+      </form>
+      <p class="auth-text">
+        Already have an account? <a href="login.html">Login</a>
+      </p>
+    </div>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
