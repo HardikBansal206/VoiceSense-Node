@@ -169,7 +169,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'public/home.html'));
+    res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });
 
 app.get('/signup.html', (req, res) => {
@@ -180,8 +180,12 @@ app.get('/login.html', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public/login.html'));
 });
 
-app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'public/index.html'));
+app.get('/dashboard.html', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/dashboard.html'));
+});
+
+app.get('/home.html', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public/home.html'));
 });
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
