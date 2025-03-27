@@ -46,7 +46,7 @@ function validateEmail(email) {
         // Store token in localStorage after successful login
         localStorage.setItem('authToken', data.token);
         // Redirect to dashboard without alert
-        window.location.href = 'http://localhost:8080/';
+        window.location.href = '/home.html';
       } else {
         alert(data.error || 'Invalid username or password.');
       }
