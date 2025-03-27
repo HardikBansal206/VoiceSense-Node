@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emergency Keyword Detection</title>
+    <link rel="stylesheet" href="css/emergency.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="custom.html" class="nav-link">Custom Keyword Detection</a>
+      <a href="urgency.html" class="nav-link">Urgency Classification</a>
+      <a href="speaker.html" class="nav-link">Speaker Identification</a>
+    </nav>
+
+    <div class="container">
+      <h1>Emergency Keyword Detection</h1>
+
+      <div class="section">
+        <h3>Upload Audio Files</h3>
+        <input type="file" id="audioFiles" multiple />
+        <button onclick="uploadFiles()">Upload & Transcribe</button>
+      </div>
+
+      <div class="section">
+        <h3>Live Recording</h3>
+        <button onclick="toggleRecording()" id="recordBtn">
+          Start Recording
+        </button>
+      </div>
+
+      <div class="section">
+        <h3>Transcript</h3>
+        <p id="transcript">Transcription will appear here...</p>
+      </div>
+
+      <div class="section emergency-results">
+        <h3>Emergency Service Recommendation</h3>
+        <p id="emergencyResult">No emergency detected yet.</p>
+      </div>
+    </div>
+
+    <script>
+      let recording = false;
+      let recognition;
+
+      async function uploadFiles() {
+        const fileInput = document.getElementById("audioFiles");
+        if (!fileInput.files.length) {
+          alert("Please select audio files.");
+          return;
+        }
+
+        const formData = new FormData();
+        for (let file of fileInput.files) {
+          formData.append("audio", file);
+        }
+
+        const response = await fetch("/transcribe", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        let allTranscripts = "";
+        data.forEach((item, index) => {
+          allTranscripts += `File ${index + 1}: ${
+            item.text || "Failed to transcribe"
+          }\n\n`;
+        });
+        document.getElementById("transcript").innerText = allTranscripts;
+      }
+
+      function toggleRecording() {
+        if (!("webkitSpeechRecognition" in window)) {
+          alert("Your browser does not support Speech Recognition.");
+          return;
+        }
+
+        if (!recording) {
+          recognition = new window.webkitSpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.lang = "en-US";
+
+          recognition.onresult = (event) => {
+            let finalTranscript = "";
+            for (let i = 0; i < event.results.length; i++) {
+              finalTranscript += event.results[i][0].transcript + " ";
+            }
+            document.getElementById("transcript").innerText = finalTranscript;
+          };
+
+          recognition.start();
+          document.getElementById("recordBtn").innerText = "Stop Recording";
+        } else {
+          recognition.stop();
+          document.getElementById("recordBtn").innerText = "Start Recording";
+        }
+        recording = !recording;
+      }
+
+      async function searchKeyword() {
+        const keyword = document.getElementById("keywordInput").value;
+        const transcript = document.getElementById("transcript").innerText;
+
+        if (!keyword) {
+          alert("Please enter a keyword.");
+          return;
+        }
+
+        const occurrences =
+          transcript.toLowerCase().split(keyword.toLowerCase()).length - 1;
+        document.getElementById(
+          "keywordResults"
+        ).innerText = `Keyword "${keyword}" found ${occurrences} times.`;
+
+        const response = await fetch("/sentiment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: keyword }),
+        });
+
+        const data = await response.json();
+        document.getElementById(
+          "sentimentResults"
+        ).innerText = `Sentiment: ${data.sentiment}`;
+      }
+    </script>
+  </body>
+</html>
