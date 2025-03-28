@@ -11,7 +11,7 @@
         <a href="home.html" class="nav-link">Home</a>
         <a href="emergency.html" class="nav-link">Emergency Detection</a>
         <a href="custom.html" class="nav-link">Custom Keyword</a>
-        <a href="urgemcy.html" class="nav-link">Urgency Classification</a>
+        <a href="urgency.html" class="nav-link">Urgency Classification</a>
     </nav>
     
     <div class="container">
@@ -33,6 +33,9 @@
 
         <h3>Keyword Occurrences</h3>
         <div id="keywordResults" class="results-box"></div>
+
+        <h3>Sentiment Analysis</h3>
+        <div id="sentimentResults" class="results-box"></div>
     </div>
     
     <script>
@@ -93,29 +96,42 @@
             recording = !recording;
         }
 
-        async function searchKeyword() {
-            const keyword = document.getElementById("keywordInput").value;
+        async function searchKeywords() {
+            const keywords = document.getElementById("keywordInput").value;
             const transcript = document.getElementById("transcript").innerText;
-
-            if (!keyword) {
-                alert("Please enter a keyword.");
+        
+            if (!keywords.trim()) {
+                alert("Please enter at least one keyword.");
                 return;
             }
-
-            const occurrences = transcript.toLowerCase().split(keyword.toLowerCase()).length - 1;
-            document.getElementById("keywordResults").innerText = `Keyword "${keyword}" found ${occurrences} times.`;
-
-            const response = await fetch("/sentiment", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ text: keyword }),
-            });
-
-            const data = await response.json();
-            document.getElementById("sentimentResults").innerText = `Sentiment: ${data.sentiment}`;
+        
+            const keywordArray = keywords.split(",").map((kw) => kw.trim().toLowerCase());
+            const transcriptLower = transcript.toLowerCase();
+        
+            let occurrencesText = "";
+            let sentimentText = "";
+        
+            for (const keyword of keywordArray) {
+                const occurrences = transcriptLower.split(keyword).length - 1;
+                occurrencesText += `Keyword "${keyword}" found ${occurrences} times.\n`;
+        
+                // Sentiment analysis for each keyword
+                const response = await fetch("/sentiment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ text: keyword }),
+                });
+        
+                const data = await response.json();
+                sentimentText += `Sentiment for "${keyword}": ${data.sentiment}\n`;
+            }
+        
+            document.getElementById("keywordResults").innerText = occurrencesText.trim();
+            document.getElementById("sentimentResults").innerText = sentimentText.trim();
         }
+        
     </script>
 </body>
 </html>

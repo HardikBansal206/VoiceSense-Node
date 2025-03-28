@@ -1,45 +1,47 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const fileInput = document.getElementById("audioFiles");
-    const urgencyTableBody = document.getElementById("urgencyTableBody");
-
-    async function uploadFiles() {
-        if (!fileInput.files.length) {
-            alert("Please select audio files.");
-            return;
-        }
-
-        const formData = new FormData();
-        for (let file of fileInput.files) {
-            formData.append("audio", file);
-        }
-
-        try {
-            const response = await fetch("/classify_urgency", {
-                method: "POST",
-                body: formData,
-            });
-
-            const data = await response.json();
-            urgencyTableBody.innerHTML = ""; // Clear previous results
-
-            data.forEach((entry, index) => {
-                const row = document.createElement("tr");
-
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${entry.fileName}</td>
-                    <td>${entry.priority}</td>
-                    <td>${entry.urgencyLevel}</td>
-                    <td>${entry.type}</td>
-                `;
-
-                urgencyTableBody.appendChild(row);
-            });
-        } catch (error) {
-            console.error("Error uploading files:", error);
-            alert("Error processing files. Please try again.");
-        }
+async function classifyUrgency() {
+    const files = document.getElementById("audioFiles").files;
+  
+    if (files.length === 0) {
+      alert("Please upload at least one file.");
+      return;
     }
-
-    document.getElementById("uploadBtn").addEventListener("click", uploadFiles);
-});
+  
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("files", file);
+    }
+  
+    try {
+      const response = await fetch("http://localhost:5000/process", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error("Error processing files.");
+      }
+  
+      const results = await response.json();
+      populateResults(results);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  
+  function populateResults(results) {
+    const resultsTable = document.getElementById("resultsTable");
+    resultsTable.innerHTML = ""; // Clear previous results
+  
+    results.forEach((result) => {
+        const row = `
+        <tr>
+          <td>${result.file.replace(".txt", ".wav")}</td>
+          <td>${result.analysis?.urgency || "N/A"}</td>
+          <td>${result.analysis?.priority_level || "N/A"}</td>
+          <td>${result.analysis?.probable_emergency || "No emergency detected"}</td>
+        </tr>
+      `;      
+      resultsTable.innerHTML += row;
+    });
+  }
+  

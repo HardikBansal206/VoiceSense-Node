@@ -35,10 +35,11 @@
         <p id="transcript">Transcription will appear here...</p>
       </div>
 
-      <div class="section emergency-results">
-        <h3>Emergency Service Recommendation</h3>
-        <p id="emergencyResult">No emergency detected yet.</p>
-      </div>
+      <div class="section">
+        <h3>Detect Emergency</h3>
+        <button onclick="detectEmergency()">Detect Emergency</button>
+        <p id="detectionResult">Emergency detection results will appear here...</p>
+      </div>      
     </div>
 
     <script>
@@ -129,6 +130,23 @@
           "sentimentResults"
         ).innerText = `Sentiment: ${data.sentiment}`;
       }
+
+      async function detectEmergency() {
+        const response = await fetch("/detect-emergency");
+        const data = await response.json();
+      
+        if (data.error) {
+          document.getElementById("detectionResult").innerText =
+            "Error: " + data.error;
+        } else {
+          let results = "";
+          data.forEach((item, index) => {
+            results += `File ${index + 1}: ${item.result}\n\n`;
+          });
+          document.getElementById("detectionResult").innerText = results;
+        }
+      }      
+      
     </script>
   </body>
 </html>
