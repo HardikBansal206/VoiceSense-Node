@@ -41,6 +41,7 @@
     <script>
         let recording = false;
         let recognition;
+        let finalTranscript = ""; // Store transcript for writing to file
 
         async function uploadFiles() {
             const fileInput = document.getElementById("audioFiles");
@@ -69,32 +70,59 @@
 
         function toggleRecording() {
             if (!("webkitSpeechRecognition" in window)) {
-                alert("Your browser does not support Speech Recognition.");
-                return;
+              alert("Your browser does not support Speech Recognition.");
+              return;
             }
-
+          
             if (!recording) {
-                recognition = new window.webkitSpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = "en-US";
-
-                recognition.onresult = (event) => {
-                    let finalTranscript = "";
-                    for (let i = 0; i < event.results.length; i++) {
-                        finalTranscript += event.results[i][0].transcript + " ";
-                    }
-                    document.getElementById("transcript").innerText = finalTranscript;
-                };
-
-                recognition.start();
-                document.getElementById("recordBtn").innerText = "Stop Recording";
+              recognition = new window.webkitSpeechRecognition();
+              recognition.continuous = true;
+              recognition.interimResults = true;
+              recognition.lang = "en-US";
+          
+              recognition.onresult = (event) => {
+                let finalTranscript = "";
+                for (let i = 0; i < event.results.length; i++) {
+                  finalTranscript += event.results[i][0].transcript + " ";
+                }
+                document.getElementById("transcript").innerText = finalTranscript;
+              };
+          
+              recognition.start();
+              document.getElementById("recordBtn").innerText = "Stop Recording";
             } else {
-                recognition.stop();
-                document.getElementById("recordBtn").innerText = "Start Recording";
+              recognition.stop();
+              document.getElementById("recordBtn").innerText = "Start Recording";
+          
+              // Get transcript content after stopping
+              const transcript = document.getElementById("transcript").innerText.trim();
+          
+              if (transcript) {
+                saveTranscript(transcript);
+              } else {
+                alert("No transcript available to save.");
+              }
             }
             recording = !recording;
-        }
+          }
+          
+          // Function to send transcript to the server
+          async function saveTranscript(transcript) {
+            const response = await fetch("/save-transcript", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ transcript }),
+            });
+          
+            const data = await response.json();
+            if (data.success) {
+              alert("Transcript saved successfully! 🎉");
+            } else {
+              alert("Error saving transcript: " + data.error);
+            }
+          }
 
         async function searchKeywords() {
             const keywords = document.getElementById("keywordInput").value;
