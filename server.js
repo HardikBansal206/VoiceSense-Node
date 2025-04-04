@@ -1,7 +1,4 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const multer = require("multer");
 const path = require("path");
@@ -55,26 +52,6 @@ app.post("/save-transcript", async (req, res) => {
   });
 });
 
-// MongoDB Connection
-mongoose
-    .connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => console.log('✅ MongoDB connected successfully!'))
-    .catch((err) => {
-        console.error(`❌ MongoDB connection error: ${err}`);
-        process.exit(1);
-    });
-
-// Define User Schema
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true, minlength: 4, maxlength: 16 },
-    email: { type: String, required: true, unique: true, match: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/ },
-    password: { type: String, required: true },
-}, { timestamps: true });
-
-const User = mongoose.model('User', userSchema);
 
 const storage = multer.diskStorage({
     destination: "./uploads/",
@@ -163,55 +140,6 @@ app.post('/sentiment', (req, res) => {
   res.json({ sentiment: sentimentLabel });
 });
 
-// Signup Route
-app.post('/api/signup', async (req, res) => {
-    const { username, email, password } = req.body;
-
-    try {
-        const userExists = await User.findOne({ $or: [{ email }, { username }] });
-        if (userExists) {
-            return res.status(400).json({ error: 'Username or email already in use.' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = new User({
-            username,
-            email,
-            password: hashedPassword,
-        });
-
-        await user.save();
-        res.status(201).json({ message: 'User registered successfully!' });
-    } catch (error) {
-        res.status(500).json({ error: 'Server error during signup.' });
-    }
-});
-
-// Login Route
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(400).json({ error: 'Invalid username or password.' });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid username or password.' });
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '7d',
-        });
-
-        res.status(200).json({ token });
-    } catch (error) {
-        res.status(500).json({ error: 'Server error during login.' });
-    }
-});
 
 //Emergency Detection
 app.get("/detect-emergency", async (req, res) => {
