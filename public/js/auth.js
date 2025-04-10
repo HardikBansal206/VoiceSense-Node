@@ -44,7 +44,7 @@ async function login() {
 
     if (data.success) {
       // Redirect to dashboard without alert
-      window.location.href = '/dashboard.html';
+      window.location.href = 'http://localhost:5000/dashboard.html';
     } else {
       alert(data.message || 'Invalid username or password.');
     }
