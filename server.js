@@ -116,8 +116,8 @@ async function convertToWav(inputFile, outputFile) {
 async function transcribeWithWhisperCli(filePath) {
     return new Promise((resolve, reject) => {
         const whisperCli = path.join(__dirname, "whisper.cpp", "build", "bin", "Release", "whisper-cli.exe");
-        // const modelPath = path.join(__dirname, "whisper.cpp", "ggml-large-v3.bin");
-        const modelPath = path.join(__dirname, "whisper.cpp", "ggml-base.en.bin");
+        const modelPath = path.join(__dirname, "whisper.cpp", "ggml-large-v3.bin");
+        //const modelPath = path.join(__dirname, "whisper.cpp", "ggml-base.en.bin");
 
         const whisperProcess = spawn(whisperCli, ["-m", modelPath, "-f", filePath]);
 
