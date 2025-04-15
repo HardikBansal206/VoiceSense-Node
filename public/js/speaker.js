@@ -115,17 +115,50 @@ async function searchKeyword() {
 }
 
 async function analyzeFiles() {
-    const response = await fetch("/analyze_audio");
-  const data = await response.json();
+  const files = document.getElementById("audioFiles").files;
 
-  if (data.error) {
-    document.getElementById("resultSummary").innerText =
-      "Error: " + data.error;
-  } else {
-    let results = "";
-    data.forEach((item, index) => {
-      results += `File ${index + 1}: ${item.result}\n\n`;
-    });
-    document.getElementById("resultSummary").innerText = results;
+  //if (files.length === 0) {
+  //  alert("Please upload at least one file.");
+  //  return;
+  //}
+
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append("files", file);
+    console(log("File added:", file.name)); // Debugging line
   }
+
+  try {
+    console.log("Sending request to server..."); // Debugging line
+    const response = await fetch("http://localhost:5000/process?type=speaker", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Error processing files.");
+    }
+
+    const results = await response.json();
+    populateResults(results);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function populateResults(results) {
+  const resultsTable = document.getElementById("speakerDetectionTable");
+  resultsTable.innerHTML = ""; // Clear previous results
+
+  results.forEach((result) => {
+      const row = `
+      <tr>
+        <td>${result.file.replace(".txt", ".wav")}</td>
+        <td>${result.analysis?.number_of_speakers || "None"}</td>
+        <td>${result.analysis?.script || "Not Specified"}</td>
+        <td>${result.analysis?.speaker_intro || "No emergency detected"}</td>
+      </tr>
+    `;
+    resultsTable.innerHTML += row;
+  });
 }  

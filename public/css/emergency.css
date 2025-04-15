@@ -84,6 +84,7 @@ button:hover {
     margin-top: 20px;
     border: 1px solid #444;
     min-height: 50px;
+    text-align: left;
 }
 
 /* Emergency Result Section */
@@ -102,4 +103,30 @@ button:hover {
 .results p {
     font-size: 16px;
     color: #fff;
+}
+
+/* Table */
+.emergency-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.emergency-table th, .emergency-table td {
+    border: 1px solid #25a11c;
+    padding: 12px;
+    text-align: center;
+}
+
+.emergency-table th {
+    background-color: #21262d;
+    color: #c9d1d9;
+}
+
+.emergency-table tbody tr:nth-child(even) {
+    background-color: #161b22;
+}
+
+.emergency-table tbody tr:hover {
+    background-color: #30363d;
 }

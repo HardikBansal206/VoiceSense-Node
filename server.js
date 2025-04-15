@@ -56,7 +56,7 @@ const { v4: uuidv4 } = require('uuid');
 const storage = multer.diskStorage({
     destination: "./uploads/",
     filename: (req, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${uuidv4()}`
+        const uniqueSuffix = `${Date.now()}-${uuidv4()}`;
         cb(null, uniqueSuffix + path.extname(file.originalname));
     },
 });
@@ -141,84 +141,13 @@ app.post('/sentiment', (req, res) => {
   res.json({ sentiment: sentimentLabel });
 });
 
-
-//Emergency Detection
-app.get("/detect-emergency", async (req, res) => {
-    const transcriptFiles = fs
-      .readdirSync("./uploads/")
-      .filter((file) => file.endsWith(".txt"));
-  
-    if (transcriptFiles.length === 0) {
-      return res.status(404).json({ error: "No transcript files found" });
-    }
-  
-    const results = [];
-    for (const file of transcriptFiles) {
-      const transcript = fs.readFileSync(path.join("./uploads/", file), "utf-8");
-  
-      try {
-        const prompt = `Here is a transcript from an audio file: "${transcript}". Can you identify if there is an emergency in this transcript? If yes, please tell type (safety/police/medical) and location (if available) and one liner brief about issue and if no issue is there then just say no issues detected. Also make sure to not have any formatting in text just give plain text without bold or italics or any other formatting.`;
-  
-        // Use the correct model name: "gemini-pro" or "gemini-pro-1.0"
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-        const result = await model.generateContent(prompt);
-        const responseText =
-          result.response.candidates?.[0]?.content?.parts?.[0]?.text ||
-          "No emergency detected.";
-  
-        results.push({ file, result: responseText });
-      } catch (error) {
-        console.error(`Error processing file ${file}:`, error);
-        results.push({ file, result: "Error in processing" });
-      }
-    }
-  
-    res.json(results);
-  });
-
-// Speaker analysis
-app.get("/analyze_audio", async (req, res) => {
-    const transcriptFiles = fs
-      .readdirSync("./uploads/")
-      .filter((file) => file.endsWith(".txt"));
-  
-    if (transcriptFiles.length === 0) {
-      return res.status(404).json({ error: "No transcript files found" });
-    }
-  
-    const results = [];
-    for (const file of transcriptFiles) {
-      const transcript = fs.readFileSync(path.join("./uploads/", file), "utf-8");
-  
-      try {
-        const prompt = `Here is an audio transcript: "${transcript}". 
-            1. How many speakers are in the audio? 
-            2. Create a script with speaker names and dialogue, ensuring no extra words are added.
-            3. Generate a brief introduction about the speakers based on tone and context.
-            And make sure not to make any text bold or italic and give all text without any formatting`;
-  
-        // Use the correct model name: "gemini-pro" or "gemini-pro-1.0"
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-        const result = await model.generateContent(prompt);
-        const responseText =
-          result.response.candidates?.[0]?.content?.parts?.[0]?.text ||
-          "No person detected.";
-  
-        results.push({ file, result: responseText });
-      } catch (error) {
-        console.error(`Error processing file ${file}:`, error);
-        results.push({ file, result: "Error in processing" });
-      }
-    }
-  
-    res.json(results);
-  });
-
-  // Urgency Detection and Analysis
+  // All process tables (Emergency, Urgency and Speaker)
   app.post("/process", async (req, res) => {
+    const type = req.query.type;
     const transcriptFiles = fs
       .readdirSync("./uploads/")
       .filter((file) => file.endsWith(".txt"));
+    console.log("Transcript files:", transcriptFiles);
     console.log(transcriptFiles);
   
     if (transcriptFiles.length === 0) {
@@ -226,77 +155,206 @@ app.get("/analyze_audio", async (req, res) => {
     }
   
     const results = [];
-  
-    for (const file of transcriptFiles) {
-      const transcript = fs.readFileSync(path.join("./uploads/", file), "utf-8");
-  
-      try {
-        // Step 1: Check for emergency detection
-        const emergencyPrompt = `You are an expert in identifying emergencies. Given the transcript of a distress call or conversation, analyze and determine if there is any emergency situation described. Respond with 'YES' or 'NO' only.\n\nTranscript: ${transcript}`;
-  
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-        const emergencyResult = await model.generateContent(emergencyPrompt);
-        const isEmergency =
-          emergencyResult.response?.candidates?.[0]?.content?.parts?.[0]?.text
-            ?.trim()
-            .toUpperCase() === "YES";
-  
-        if (isEmergency) {
-          // Step 2: Get urgency, priority level, and probable emergency
-          const analysisPrompt = `
-            Analyze the following conversation transcript and return ONLY a valid JSON object with:
-            {
-              "urgency": "Low/Moderate/High/Critical",
-              "priority_level": 1-5,
-              "probable_emergency": "Brief emergency description"
+    if (type === "emergency") {
+      console.log("Processing emergency detection...");
+      for (const file of transcriptFiles) {
+        const transcript = fs.readFileSync(path.join("./uploads/", file), "utf-8");
+    
+        try {
+          // Step 1: Check for emergency detection
+          const emergencyPrompt = `You are an expert in identifying emergencies. Given the transcript of a distress call or conversation, analyze and determine if there is any emergency situation described. Respond with 'YES' or 'NO' only.\n\nTranscript: ${transcript}`;
+    
+          const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+          const emergencyResult = await model.generateContent(emergencyPrompt);
+          const isEmergency =
+            emergencyResult.response?.candidates?.[0]?.content?.parts?.[0]?.text
+              ?.trim()
+              .toUpperCase() === "YES";
+    
+          if (isEmergency) {
+            // Step 2: Get urgency, priority level, and probable emergency
+            const analysisPrompt = `
+              Analyze the following conversation transcript and return ONLY a valid JSON object with:
+              {
+                  "type": "safety(fire)/police/medical/none",
+                  "location": "Location if mentioned, else 'Unknown'",
+                  "issue": "Brief emergency description or say 'No issue'"
+              }
+              
+              Transcript: ${transcript}
+    
+              Respond only with valid JSON. Do not include explanations or any extra text.
+            `;
+    
+            const analysisResult = await model.generateContent(analysisPrompt);
+            const analysisResponseText =
+              analysisResult.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "{}";
+    
+            // Extract JSON using regex
+            const jsonMatch = analysisResponseText.match(/\{[\s\S]*\}/);
+            let analysisData;
+            try {
+              analysisData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+            } catch (parseError) {
+              console.error(`Error parsing analysis for ${file}:`, parseError);
+              analysisData = {
+                  type: "Unknown",
+                  location: "Unknown",
+                  issue: "Could not parse response",
+              };
             }
-            
-            Transcript: ${transcript}
-          `;
-  
-          const analysisResult = await model.generateContent(analysisPrompt);
-          const analysisResponseText =
-            analysisResult.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "{}";
-  
-          // Extract JSON using regex
-          const jsonMatch = analysisResponseText.match(/\{[\s\S]*\}/);
-          let analysisData;
-          try {
-            analysisData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-          } catch (parseError) {
-            console.error(`Error parsing analysis for ${file}:`, parseError);
-            analysisData = {
-              urgency: "Unknown",
-              priority_level: "N/A",
-              probable_emergency: "Unable to parse analysis",
-            };
+    
+            results.push({
+              file,
+              analysis: analysisData,
+            });
+          } else {
+            results.push({
+              file,
+              analysis: {
+                type: "Unknown",
+                location: "Unknown",
+                issue: "No emergency detected",
+              },
+            });
           }
-  
-          results.push({
-            file,
-            analysis: analysisData,
-          });
-        } else {
-          results.push({
-            file,
-            analysis: {
-              urgency: "N/A",
-              priority_level: "N/A",
-              probable_emergency: "No emergency detected",
-            },
-          });
+        } catch (error) {
+          console.error(`Error processing file ${file}:`, error);
+          results.push({ file, result: "Error in processing" });
         }
-      } catch (error) {
-        console.error(`Error processing file ${file}:`, error);
-        results.push({ file, result: "Error in processing" });
       }
+    
+      res.json(results);
+    } else if (type === "urgency") {
+      console.log("Processing urgency detection...");
+      for (const file of transcriptFiles) {
+        const transcript = fs.readFileSync(path.join("./uploads/", file), "utf-8");
+    
+        try {
+          // Step 1: Check for emergency detection
+          const emergencyPrompt = `You are an expert in identifying emergencies. Given the transcript of a distress call or conversation, analyze and determine if there is any emergency situation described. Respond with 'YES' or 'NO' only.\n\nTranscript: ${transcript}`;
+    
+          const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+          const emergencyResult = await model.generateContent(emergencyPrompt);
+          const isEmergency =
+            emergencyResult.response?.candidates?.[0]?.content?.parts?.[0]?.text
+              ?.trim()
+              .toUpperCase() === "YES";
+    
+          if (isEmergency) {
+            // Step 2: Get urgency, priority level, and probable emergency
+            const analysisPrompt = `
+              Analyze the following conversation transcript and return ONLY a valid JSON object with:
+              {
+                "urgency": "Low/Moderate/High/Critical",
+                "priority_level": 1-5,
+                "probable_emergency": "Brief emergency description"
+              }
+              
+              Transcript: ${transcript}
+            `;
+    
+            const analysisResult = await model.generateContent(analysisPrompt);
+            const analysisResponseText =
+              analysisResult.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "{}";
+    
+            // Extract JSON using regex
+            const jsonMatch = analysisResponseText.match(/\{[\s\S]*\}/);
+            let analysisData;
+            try {
+              analysisData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+            } catch (parseError) {
+              console.error(`Error parsing analysis for ${file}:`, parseError);
+              analysisData = {
+                urgency: "Unknown",
+                priority_level: "N/A",
+                probable_emergency: "Unable to parse analysis",
+              };
+            }
+    
+            results.push({
+              file,
+              analysis: analysisData,
+            });
+          } else {
+            results.push({
+              file,
+              analysis: {
+                urgency: "N/A",
+                priority_level: "N/A",
+                probable_emergency: "No emergency detected",
+              },
+            });
+          }
+        } catch (error) {
+          console.error(`Error processing file ${file}:`, error);
+          results.push({ file, result: "Error in processing" });
+        }
+      }
+    
+      res.json(results);
+    } else if (type === "speaker") {
+      console.log("Processing speaker detection...");
+      for (const file of transcriptFiles) {
+        const transcript = fs.readFileSync(path.join("./uploads/", file), "utf-8");
+    
+        try {
+          
+          const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+            // Step 1: Get speaker details
+            const analysisPrompt = `You are an expert in identifying speakers.
+              Analyze the following conversation transcript and return ONLY a valid JSON object with:
+              {
+                "number_of_speakers": Number,
+                "script": "Clean dialogue script here...",
+                "speaker_intro": "A short paragraph about the speakers"
+              }
+              
+              Transcript: ${transcript}
+            `;
+    
+            const analysisResult = await model.generateContent(analysisPrompt);
+            const analysisResponseText =
+              analysisResult.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "{}";
+    
+            // Extract JSON using regex
+            const jsonMatch = analysisResponseText.match(/\{[\s\S]*\}/);
+            let analysisData;
+            try {
+              analysisData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
+
+              // Post-process script: Ensure each "Speaker X:" line starts on a new line
+              if (analysisData.script) {
+                analysisData.script = analysisData.script.replace(/(Speaker\s\d+:)/g, '<br>$1').trim();
+                console.log("Processed script:", analysisData.script);
+              }
+
+            } catch (parseError) {
+              console.error(`Error parsing analysis for ${file}:`, parseError);
+              analysisData = {
+                number_of_speakers: "Unknown",
+                script: "N/A",
+                speaker_intro: "Can't be generated",
+              };
+            }
+    
+            results.push({
+              file,
+              analysis: analysisData,
+            });
+          }
+         catch (error) {
+          console.error(`Error processing file ${file}:`, error);
+          results.push({ file, result: "Error in processing" });
+        }
+      }
+    
+      res.json(results);
     }
-  
-    res.json(results);
+
   });
 
   
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public/index.html'));
 });

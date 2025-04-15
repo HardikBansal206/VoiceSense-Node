@@ -38,7 +38,19 @@
       <div class="section">
         <h3>Detect Emergency</h3>
         <button onclick="detectEmergency()">Detect Emergency</button>
-        <p id="detectionResult">Emergency detection results will appear here...</p>
+        <table class="emergency-table">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Type</th>
+              <th>Location</th>
+              <th>Issue</th>
+            </tr>
+          </thead>
+          <tbody id="detectionTable">
+            <!-- Results will be populated here -->
+          </tbody>
+        </table>        
       </div>      
     </div>
 
@@ -128,52 +140,59 @@
         } else {
           alert("Error saving transcript: " + data.error);
         }
-      }      
+      }
+      
+      
+      async function detectEmergency() {
+        const files = document.getElementById("audioFiles").files;
 
-      async function searchKeyword() {
-        const keyword = document.getElementById("keywordInput").value;
-        const transcript = document.getElementById("transcript").innerText;
+        //if (files.length === 0) {
+        //  alert("Please upload at least one file.");
+        //  return;
+        //}
 
-        if (!keyword) {
-          alert("Please enter a keyword.");
-          return;
+        const formData = new FormData();
+        for (const file of files) {
+          formData.append("files", file);
+          console(log("File added:", file.name)); // Debugging line
         }
 
-        const occurrences =
-          transcript.toLowerCase().split(keyword.toLowerCase()).length - 1;
-        document.getElementById(
-          "keywordResults"
-        ).innerText = `Keyword "${keyword}" found ${occurrences} times.`;
+        try {
+          console.log("Sending request to server..."); // Debugging line
+          const response = await fetch("http://localhost:5000/process?type=emergency", {
+            method: "POST",
+            body: formData,
+          });
 
-        const response = await fetch("/sentiment", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: keyword }),
-        });
+          if (!response.ok) {
+            throw new Error("Error processing files.");
+          }
 
-        const data = await response.json();
-        document.getElementById(
-          "sentimentResults"
-        ).innerText = `Sentiment: ${data.sentiment}`;
+          const results = await response.json();
+          populateResults(results);
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
 
-      async function detectEmergency() {
-        const response = await fetch("/detect-emergency");
-        const data = await response.json();
-      
-        if (data.error) {
-          document.getElementById("detectionResult").innerText =
-            "Error: " + data.error;
-        } else {
-          let results = "";
-          data.forEach((item, index) => {
-            results += `File ${index + 1}: ${item.result}\n\n`;
-          });
-          document.getElementById("detectionResult").innerText = results;
-        }
-      }      
+      function populateResults(results) {
+        const resultsTable = document.getElementById("detectionTable");
+        resultsTable.innerHTML = ""; // Clear previous results
+
+        results.forEach((result) => {
+            const row = `
+            <tr>
+              <td>${result.file.replace(".txt", ".wav")}</td>
+              <td>${result.analysis?.type || "None"}</td>
+              <td>${result.analysis?.location || "Not Specified"}</td>
+              <td>${result.analysis?.issue || "No emergency detected"}</td>
+            </tr>
+          `;
+          resultsTable.innerHTML += row;
+        });
+      }
+
+
       
     </script>
   </body>

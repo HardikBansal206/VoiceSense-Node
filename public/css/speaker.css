@@ -113,3 +113,40 @@ button:hover {
 .results-table tbody tr:hover {
     background-color: #30363d;
 }
+
+/* Transcript Section */
+#transcript {
+    background: #111;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #444;
+    min-height: 50px;
+    text-align: left;
+}
+
+/* Table */
+.speaker-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.speaker-table th, .speaker-table td {
+    border: 1px solid #25a11c;
+    padding: 12px;
+    text-align: center;
+}
+
+.speaker-table th {
+    background-color: #21262d;
+    color: #c9d1d9;
+}
+
+.speaker-table tbody tr:nth-child(even) {
+    background-color: #161b22;
+}
+
+.speaker-table tbody tr:hover {
+    background-color: #30363d;
+}

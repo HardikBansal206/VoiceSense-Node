@@ -13,7 +13,7 @@ async function classifyUrgency() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/process", {
+    const response = await fetch("http://localhost:5000/process?type=urgency", {
       method: "POST",
       body: formData,
     });

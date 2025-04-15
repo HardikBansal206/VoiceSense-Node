@@ -37,7 +37,19 @@
           <div class="section">
             <h3>Analysis Result</h3>
             <button onclick="analyzeFiles()">Analyze</button>
-            <p id="resultSummary">Number of speakers will appear here...</p>
+            <table class="speaker-table">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Speakers</th>
+                  <th>Script</th>
+                  <th>Speakers Overview</th>
+                </tr>
+              </thead>
+              <tbody id="speakerDetectionTable">
+                <!-- Results will be populated here -->
+              </tbody>
+            </table>
           </div>
     </div>
 
