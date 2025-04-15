@@ -40,7 +40,7 @@ app.post("/save-transcript", async (req, res) => {
     return res.status(400).json({ success: false, error: "No transcript provided" });
   }
 
-  const fileName = `transcript_${Date.now()}.txt`;
+  const fileName = `transcript_${Date.now()}-${uuidv4()}.txt`;
   const filePath = path.join(uploadDir, fileName);
 
   fs.writeFile(filePath, transcript, (err) => {
@@ -52,11 +52,12 @@ app.post("/save-transcript", async (req, res) => {
   });
 });
 
-
+const { v4: uuidv4 } = require('uuid');
 const storage = multer.diskStorage({
     destination: "./uploads/",
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        const uniqueSuffix = `${Date.now()}-${uuidv4()}`
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     },
 });
 
